@@ -675,3 +675,7 @@ typedef NS_ENUM(NSInteger, MediaType) {
 @interface AWEFakeProgressSliderView : UIView
 - (void)applyCustomProgressStyle;
 @end
+
+//隐藏进度条下方横线
+@interface AWELoadingAndVolumeView : UIView
+@end
