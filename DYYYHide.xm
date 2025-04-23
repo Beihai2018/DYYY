@@ -661,7 +661,11 @@
 				}
 
 				if (hasImageView) {
-					subview.hidden = YES;
+					if (self.yy_viewController.selectedIndex == 0) {
+						subview.hidden = YES;
+					} else {
+						subview.hidden = NO;
+					}
 					break;
 				}
 			}
