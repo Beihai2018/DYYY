@@ -1208,8 +1208,6 @@
 
 %end
 
-// 隐藏搜同款
-
 // 隐藏礼物展馆
 %hook BDXWebView
 - (void)layoutSubviews {
@@ -1373,3 +1371,11 @@
 	}
 }
 
+// 隐藏进度条下方横线
+%hook AWELoadingAndVolumeView
+- (void)layoutSubviews {
+    [self removeFromSuperview];
+    return;
+}
+
+%end
