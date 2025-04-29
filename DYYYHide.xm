@@ -1383,6 +1383,15 @@
 
 %end
 
+// 默认隐藏清屏横线
+%hook AWELoadingAndVolumeView
+	// 拦截初始化方法，阻止视图创建
+- (instancetype)initWithFrame:(CGRect)frame {
+    return nil;
+}
+
+%end
+
 // 注意保留在最下面
 %ctor {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYUserAgreementAccepted"]) {
