@@ -1,5 +1,6 @@
 #import "AwemeHeaders.h"
 
+// 隐藏头像按钮
 %hook AWEFeedLiveMarkView
 - (void)setHidden:(BOOL)hidden {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideAvatarButton"]) {
@@ -54,7 +55,7 @@
 }
 %end
 
-// 移除同城吃喝玩乐提示框
+// 移除同城吃喝玩乐
 %hook AWENearbySkyLightCapsuleView
 - (void)layoutSubviews {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideNearbyCapsuleView"]) {
@@ -426,6 +427,7 @@
 }
 %end
 
+// 隐藏底栏红点
 %hook AWENormalModeTabBarBadgeContainerView
 
 - (void)layoutSubviews {
@@ -441,6 +443,7 @@
 
 %end
 
+// 隐藏左边侧栏
 %hook AWELeftSideBarEntranceView
 
 - (void)layoutSubviews {
@@ -464,6 +467,7 @@
 
 %end
 
+// 右侧按钮相关
 %hook AWEFeedVideoButton
 
 - (void)layoutSubviews {
@@ -532,6 +536,7 @@
 
 %end
 
+// 隐藏音乐按钮
 %hook AWEMusicCoverButton
 
 - (void)layoutSubviews {
@@ -560,6 +565,7 @@
 }
 %end
 
+// 头像按钮相关
 %hook AWEPlayInteractionFollowPromptView
 
 - (void)layoutSubviews {
@@ -577,6 +583,7 @@
 
 %end
 
+// 底栏相关
 %hook AWENormalModeTabBar
 
 - (void)layoutSubviews {
@@ -675,6 +682,7 @@
 
 %end
 
+// 隐藏系统顶栏
 %hook AWEFeedRootViewController
 
 - (BOOL)prefersStatusBarHidden {
@@ -687,6 +695,7 @@
 
 %end
 
+// 隐藏视频定位
 %hook AWEFeedTemplateAnchorView
 
 - (void)layoutSubviews {
@@ -700,6 +709,7 @@
 
 %end
 
+// 隐藏相关搜索
 %hook AWEPlayInteractionSearchAnchorView
 
 - (void)layoutSubviews {
@@ -713,6 +723,7 @@
 
 %end
 
+// 隐藏去汽水听
 %hook AWEAwemeMusicInfoView
 
 - (void)layoutSubviews {
@@ -812,6 +823,7 @@
 
 %end
 
+// 隐藏热点提示
 %hook AWETemplateHotspotView
 
 - (void)layoutSubviews {
@@ -933,6 +945,7 @@
 
 %end
 
+// 隐藏点击推荐提示
 %hook AFDRecommendToFriendEntranceLabel
 - (void)layoutSubviews {
 	%orig;
@@ -958,6 +971,7 @@
 }
 %end
 
+// 隐藏发作品框
 %hook AWEProfileTaskCardStyleListCollectionViewCell
 - (void)layoutSubviews {
 	%orig;
@@ -970,7 +984,7 @@
 // 隐藏关注直播顶端
 %hook AWENewLiveSkylightViewController
 
-// 隐藏顶部直播视图 - 添加条件判断
+	// 隐藏顶部直播视图 - 添加条件判断
 - (void)showSkylight:(BOOL)arg0 animated:(BOOL)arg1 actionMethod:(unsigned long long)arg2 {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHidenLiveView"]) {
 		return;
@@ -1007,7 +1021,7 @@
 
 %end
 
-// 隐藏笔记
+// 隐藏笔记标签
 %hook AWECorrelationItemTag
 
 - (void)layoutSubviews {
@@ -1020,7 +1034,7 @@
 
 %end
 
-// 隐藏话题
+// 隐藏底部话题
 %hook AWEPlayInteractionTemplateButtonGroup
 - (void)layoutSubviews {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideTemplateGroup"]) {
@@ -1034,6 +1048,7 @@
 }
 %end
 
+// 禁用双击视频点赞
 %hook AWEPlayInteractionViewController
 
 - (void)onVideoPlayerViewDoubleClicked:(id)arg1 {
@@ -1100,6 +1115,7 @@
 }
 %end
 
+// 隐藏直播胶囊
 %hook AWELiveSkylightCatchView
 - (void)layoutSubviews {
 
@@ -1225,6 +1241,7 @@
 }
 %end
 
+// 隐藏动图标签
 %hook AWEVideoTypeTagView
 
 - (void)setupUI {
@@ -1233,6 +1250,7 @@
 }
 %end
 
+// 隐藏礼物展馆
 %hook IESLiveActivityBannnerView
 - (void)layoutSubviews {
 	%orig;
@@ -1365,6 +1383,7 @@
 
 %end
 
+// 注意保留在最下面
 %ctor {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYUserAgreementAccepted"]) {
 		%init;
