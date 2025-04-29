@@ -755,7 +755,7 @@
 	if (!targetClass)
 		return;
 
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideInteractionSearch"]) {
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideZpsousuo"]) {
 
 		SEL removeSel = NSSelectorFromString(@"removeFromSuperview");
 		if ([targetClass instancesRespondToSelector:removeSel]) {
