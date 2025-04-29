@@ -265,16 +265,6 @@
 }
 %end
 
-// 隐藏观看历史搜索
-%hook AWEDiscoverFeedEntranceView
-- (id)init {
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideInteractionSearch"]) {
-		return nil;
-	}
-	return %orig;
-}
-%end
-
 // 隐藏校园提示
 %hook AWETemplateTagsCommonView
 
