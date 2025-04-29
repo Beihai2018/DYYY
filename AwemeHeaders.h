@@ -401,11 +401,6 @@ typedef NS_ENUM(NSInteger, MediaType) {
 @property (nonatomic, assign, getter=isHidden) BOOL hidden;
 @end
 
-@interface AWETemplateTagsCommonView : UIView
-@property (nonatomic, strong, readonly) UIView *superview;
-@property (nonatomic, assign, getter=isHidden) BOOL hidden;
-@end
-
 @interface AFDSkylightCellBubble : UIView
 @property (nonatomic, strong, readonly) UIView *superview;
 @property (nonatomic, assign, getter=isHidden) BOOL hidden;
@@ -674,4 +669,12 @@ typedef NS_ENUM(NSInteger, MediaType) {
 
 @interface AWEFakeProgressSliderView : UIView
 - (void)applyCustomProgressStyle;
+@end
+
+// 隐藏每日精选
+@interface AWETemplateTagsCommonView : UIView
+@end
+
+// 隐藏清屏横线
+@interface AWELoadingAndVolumeView : UIView
 @end
