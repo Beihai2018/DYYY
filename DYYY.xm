@@ -625,16 +625,6 @@ static void DYYYAddCustomViewToParent(UIView *parentView, float transparency) {
 													       }];
 			[actions addObject:showSharePanel];
 		}
-		// 添加长按面板
-		if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYDoubleTapshowDislikeOnVideo"] || ![[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYDoubleTapshowDislikeOnVideo"]) {
-
-			AWEUserSheetAction *showDislikeOnVideo = [NSClassFromString(@"AWEUserSheetAction") actionWithTitle:@"长按面板"
-														   imgName:nil
-														   handler:^{
-														     [self showDislikeOnVideo]; // 执行长按面板操作
-														   }];
-			[actions addObject:showDislikeOnVideo];
-		}
 
 		// 显示操作表
 		[actionSheet setActions:actions];
