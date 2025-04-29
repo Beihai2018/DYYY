@@ -266,24 +266,6 @@
 }
 %end
 
-// 隐藏校园提示
-%hook AWETemplateTagsCommonView
-
-- (void)layoutSubviews {
-	%orig;
-
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideTemplateTags"]) {
-		UIView *parentView = self.superview;
-		if (parentView) {
-			parentView.hidden = YES;
-		} else {
-			self.hidden = YES;
-		}
-	}
-}
-
-%end
-
 // 隐藏挑战贴纸
 %hook AWEFeedStickerContainerView
 
@@ -1381,6 +1363,17 @@
 	}
 }
 
+%end
+
+// 隐藏每日精选
+%hook AWETemplateTagsCommonView
+- (id)initWithFrame:(CGRect)frame {
+    self = %orig;
+    if ([NSUserDefaults.standardUserDefaults boolForKey:@"DYYYHideMrjingxuan"]) {
+        self.hidden = YES;
+    }
+    return self;
+}
 %end
 
 // 默认隐藏清屏横线
