@@ -88,6 +88,7 @@
 
 %end
 
+// 关注二次确认
 %hook AWEPlayInteractionUserAvatarElement
 - (void)onFollowViewClicked:(UITapGestureRecognizer *)gesture {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYfollowTips"]) {
@@ -126,6 +127,7 @@
 
 %end
 
+// 隐藏底栏加号
 %hook AWENormalModeTabBarGeneralPlusButton
 + (id)button {
 	BOOL isHiddenJia = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisHiddenJia"];
@@ -291,6 +293,7 @@
 
 %end
 
+// 弹幕改色
 %hook AWEDanmakuContentLabel
 - (void)setTextColor:(UIColor *)textColor {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYEnableDanmuColor"]) {
@@ -336,6 +339,7 @@
 }
 %end
 
+// 隐藏视频定位
 %hook AWEMarkView
 
 - (void)layoutSubviews {
@@ -1763,6 +1767,7 @@ static CGFloat rightLabelRightMargin = -1;
 
 %end
 
+// 视频默认最高画质
 %hook AWEPlayerPlayControlHandler
 
 - (void)setupAVPlayerItem:(AVPlayerItem *)item {
@@ -2198,6 +2203,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
+// 隐藏头像按钮
 %hook AWEFeedLiveMarkView
 - (void)setHidden:(BOOL)hidden {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideAvatarButton"]) {
@@ -2208,6 +2214,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
+// 隐藏底栏评论
 %hook AWECommentInputBackgroundView
 - (void)layoutSubviews {
 	%orig;
@@ -2263,7 +2270,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
-// 移除同城吃喝玩乐提示框
+// 移除同城吃喝玩乐
 %hook AWENearbySkyLightCapsuleView
 - (void)layoutSubviews {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideNearbyCapsuleView"]) {
@@ -2518,7 +2525,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
-// 去除"我的"加入挑战横幅
+	// 去除"我的"加入挑战横幅
 %hook AWEPostWorkViewController
 - (BOOL)isDouGuideTipViewShow {
 	BOOL r = %orig;
@@ -2679,6 +2686,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
+// 隐藏底栏红点
 %hook AWENormalModeTabBarBadgeContainerView
 
 - (void)layoutSubviews {
@@ -2694,6 +2702,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
+// 隐藏左侧边栏
 %hook AWELeftSideBarEntranceView
 
 - (void)layoutSubviews {
@@ -2710,6 +2719,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
+// 右侧按钮相关
 %hook AWEFeedVideoButton
 
 - (void)layoutSubviews {
@@ -2778,6 +2788,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
+// 隐藏挑战贴纸
 %hook UIButton
 
 - (void)setTitle:(NSString *)title forState:(UIControlState)state {
@@ -2819,6 +2830,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 	NSString *accessibilityLabel = self.accessibilityLabel;
 
+// 隐藏输入扫码
 	if ([accessibilityLabel isEqualToString:@"拍照搜同款"] || [accessibilityLabel isEqualToString:@"扫一扫"]) {
 		if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideScancode"]) {
 			[self removeFromSuperview];
@@ -2826,6 +2838,7 @@ static AWEIMReusableCommonCell *currentCell;
 		}
 	}
 
+// 隐藏返回按钮
 	if ([accessibilityLabel isEqualToString:@"返回"]) {
 		if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideBack"]) {
 			UIView *parent = self.superview;
@@ -2839,6 +2852,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
+// 隐藏私信回复
 %hook AWEIMFeedVideoQuickReplayInputViewController
 
 - (void)viewDidLayoutSubviews {
@@ -2851,6 +2865,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
+// 隐藏弹出热搜
 %hook AWEHPSearchBubbleEntranceView
 - (void)layoutSubviews {
 	%orig;
@@ -2863,6 +2878,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
+// 隐藏挑战贴纸
 %hook ACCGestureResponsibleStickerView
 - (void)layoutSubviews {
 	%orig;
@@ -2874,6 +2890,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
+// 隐藏音乐按钮
 %hook AWEMusicCoverButton
 
 - (void)layoutSubviews {
@@ -2902,6 +2919,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
+// 隐藏头像按钮
 %hook AWEPlayInteractionFollowPromptView
 
 - (void)layoutSubviews {
@@ -2924,6 +2942,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
+// 底栏相关
 %hook AWENormalModeTabBar
 
 - (void)layoutSubviews {
@@ -3032,7 +3051,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
-// 直播状态栏
+	// 直播状态栏
 %hook IESLiveAudienceViewController
 - (BOOL)prefersStatusBarHidden {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisHideStatusbar"]) {
@@ -3047,7 +3066,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
-// 主页状态栏
+	// 主页状态栏
 %hook AWEAwemeDetailTableViewController
 - (BOOL)prefersStatusBarHidden {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisHideStatusbar"]) {
@@ -3062,7 +3081,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
-// 图文状态栏
+	// 图文状态栏
 %hook AWEFullPageFeedNewContainerViewController
 - (BOOL)prefersStatusBarHidden {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisHideStatusbar"]) {
@@ -3091,6 +3110,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
+// 隐藏相关搜索
 %hook AWEPlayInteractionSearchAnchorView
 
 - (void)layoutSubviews {
@@ -3104,6 +3124,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
+// 隐藏去汽水听
 %hook AWEAwemeMusicInfoView
 
 - (void)layoutSubviews {
@@ -3208,6 +3229,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
+// 隐藏热点提示
 %hook AWETemplateHotspotView
 
 - (void)layoutSubviews {
@@ -3329,6 +3351,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
+// 隐藏点击推荐提示
 %hook AFDRecommendToFriendEntranceLabel
 - (void)layoutSubviews {
 	%orig;
@@ -3354,6 +3377,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
+// 隐藏发作品框
 %hook AWEProfileTaskCardStyleListCollectionViewCell
 - (void)layoutSubviews {
 	%orig;
@@ -3366,7 +3390,7 @@ static AWEIMReusableCommonCell *currentCell;
 // 隐藏关注直播顶端
 %hook AWENewLiveSkylightViewController
 
-// 隐藏顶部直播视图 - 添加条件判断
+	// 隐藏顶部直播视图 - 添加条件判断
 - (void)showSkylight:(BOOL)arg0 animated:(BOOL)arg1 actionMethod:(unsigned long long)arg2 {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHidenLiveView"]) {
 		return;
@@ -3403,7 +3427,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
-// 隐藏笔记
+// 隐藏笔记标签
 %hook AWECorrelationItemTag
 
 - (void)layoutSubviews {
@@ -3416,7 +3440,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
-// 隐藏话题
+// 隐藏底部话题
 %hook AWEPlayInteractionTemplateButtonGroup
 - (void)layoutSubviews {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideTemplateGroup"]) {
@@ -3430,6 +3454,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
+// 禁用双击视频点赞
 %hook AWEPlayInteractionViewController
 
 - (void)onVideoPlayerViewDoubleClicked:(id)arg1 {
@@ -3498,6 +3523,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
+// 隐藏直播胶囊
 %hook AWELiveSkylightCatchView
 - (void)layoutSubviews {
 
@@ -3637,6 +3663,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
+// 隐藏动图标签
 %hook AWEVideoTypeTagView
 
 - (void)setupUI {
@@ -3645,6 +3672,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
+// 隐藏礼物展馆
 %hook IESLiveActivityBannnerView
 - (void)layoutSubviews {
 	%orig;
@@ -3833,7 +3861,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
-// 隐藏双栏入口
+// 隐藏双列箭头
 %hook AWENormalModeTabBarFeedView
 - (void)layoutSubviews {
 	%orig;
