@@ -510,10 +510,14 @@ static CGFloat currentScale = 1.0;
 	%orig(center);
 }
 
-- (void)layoutSubviews {
-	%orig;
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisHiddenEntry"]) {
-		[self removeFromSuperview];
+// 清屏模式不隐藏全屏按钮
+- (void)setHidden:(BOOL)hidden {
+     BOOL shouldHide = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisHiddenEntry"];
+     
+     if (shouldHide) {
+         %orig(shouldHide);
+     } else {
+         %orig(hidden);
 	}
 }
 
@@ -600,21 +604,6 @@ static CGFloat currentScale = 1.0;
 			if (backgroundView) {
 				BOOL shouldShowBackground = isHomeSelected || (isFriendsSelected && !hideFriendsButton);
 				backgroundView.hidden = shouldShowBackground;
-			}
-		}
-	}
-
-	// 隐藏分隔线
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisEnableFullScreen"]) {
-		for (UIView *subview in self.subviews) {
-			if (![subview isKindOfClass:[UIView class]])
-				continue;
-			if (subview.frame.size.height <= 0.5 && subview.frame.size.width > 300) {
-				subview.hidden = YES;
-				CGRect frame = subview.frame;
-				frame.size.height = 0;
-				subview.frame = frame;
-				subview.alpha = 0;
 			}
 		}
 	}
