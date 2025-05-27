@@ -361,6 +361,7 @@
 
 %end
 
+// 弹幕改色
 %hook AWEDanmakuItemTextInfo
 - (void)setDanmakuTextColor:(id)arg1 {
 
@@ -413,6 +414,7 @@
 	return window;
 }
 
+// 双击菜单
 %new
 - (void)handleDoubleFingerLongPressGesture:(UILongPressGestureRecognizer *)gesture {
 	if (gesture.state == UIGestureRecognizerStateBegan) {
@@ -474,6 +476,7 @@
 
 %end
 
+// 评论区毛玻璃
 %hook AWEBaseListViewController
 - (void)viewDidLayoutSubviews {
 	%orig;
@@ -627,6 +630,7 @@
 
 %end
 
+// 收藏二次确认
 %hook AWEFeedVideoButton
 - (id)touchUpInsideBlock {
 	id r = %orig;
@@ -652,6 +656,7 @@
 }
 %end
 
+// 进度条样式
 %hook AWEFeedProgressSlider
 
 // layoutSubviews 保持不变
@@ -941,6 +946,7 @@ static CGFloat rightLabelRightMargin = -1;
 }
 %end
 
+// 隐藏底栏按钮
 %hook AWENormalModeTabBarTextView
 
 - (void)layoutSubviews {
@@ -983,6 +989,7 @@ static CGFloat rightLabelRightMargin = -1;
 }
 %end
 
+// 时间属地显示
 %hook AWEPlayInteractionTimestampElement
 - (id)timestampLabel {
 	UILabel *label = %orig;
@@ -1233,6 +1240,7 @@ static CGFloat rightLabelRightMargin = -1;
 
 %end
 
+// 文案下移距离
 %hook AWEPlayInteractionDescriptionScrollView
 
 - (void)layoutSubviews {
@@ -1290,6 +1298,7 @@ static CGFloat rightLabelRightMargin = -1;
 
 %end
 
+// 昵称下移距离
 %hook AWEUserNameLabel
 
 - (void)layoutSubviews {
@@ -1323,6 +1332,7 @@ static CGFloat rightLabelRightMargin = -1;
 
 %end
 
+// 右侧按钮图标
 %hook AWEFeedVideoButton
 
 - (void)setImage:(id)arg1 {
@@ -1638,6 +1648,7 @@ static CGFloat rightLabelRightMargin = -1;
 }
 %end
 
+// 长按评论复制文案
 %hook _TtC33AWECommentLongPressPanelSwiftImpl32CommentLongPressPanelCopyElement
 
 - (void)elementTapped {
@@ -1878,6 +1889,7 @@ static CGFloat rightLabelRightMargin = -1;
 
 %end
 
+// 启用自动播放
 %hook AWEFeedGuideManager
 
 - (bool)enableAutoplay {
@@ -1913,6 +1925,7 @@ static CGFloat rightLabelRightMargin = -1;
 }
 %end
 
+// 设置长按倍数
 %end
 %hook AWEPlayInteractionSpeedController
 
@@ -1966,6 +1979,7 @@ static CGFloat rightLabelRightMargin = -1;
 }
 %end
 
+// 移除评论实况水印
 %hook AWECommentMediaDownloadConfigLivePhoto
 
 bool commentLivePhotoNotWaterMark = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYCommentLivePhotoNotWaterMark"];
@@ -1984,6 +1998,7 @@ bool commentLivePhotoNotWaterMark = [[NSUserDefaults standardUserDefaults] boolF
 
 %end
 
+// 移除评论图片水印
 %hook AWECommentImageModel
 - (id)downloadUrl {
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYCommentNotWaterMark"]) {
@@ -1993,6 +2008,7 @@ bool commentLivePhotoNotWaterMark = [[NSUserDefaults standardUserDefaults] boolF
 }
 %end
 
+// 保存评论区表情包
 %hook _TtC33AWECommentLongPressPanelSwiftImpl37CommentLongPressPanelSaveImageElement
 
 static BOOL isDownloadFlied = NO;
@@ -2064,6 +2080,7 @@ static BOOL isDownloadFlied = NO;
 }
 %end
 
+// 保存预览页表情包
 %hook AWEIMEmoticonPreviewV2
 
 // 添加保存按钮
@@ -2145,6 +2162,7 @@ static BOOL isDownloadFlied = NO;
 
 static AWEIMReusableCommonCell *currentCell;
 
+// 保存聊天页表情包
 %hook AWEIMCustomMenuComponent
 - (void)msg_showMenuForBubbleFrameInScreen:(CGRect)bubbleFrame tapLocationInScreen:(CGPoint)tapLocation menuItemList:(id)menuItems moreEmoticon:(BOOL)moreEmoticon onCell:(id)cell extra:(id)extra {
 	if (![[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYForceDownloadIMEmotion"]) {
@@ -2479,16 +2497,6 @@ static AWEIMReusableCommonCell *currentCell;
 	return [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideCommentViews"];
 }
 
-%end
-
-// 隐藏观看历史搜索
-%hook AWEDiscoverFeedEntranceView
-- (id)init {
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideInteractionSearch"]) {
-		return nil;
-	}
-	return %orig;
-}
 %end
 
 // 隐藏校园提示
@@ -2935,7 +2943,7 @@ static AWEIMReusableCommonCell *currentCell;
 		if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideFollowPromptView"]) {
 			self.userInteractionEnabled = NO;
 			[self removeFromSuperview];
-			return;
+			return; //移除头像加号
 		}
 	}
 }
@@ -3021,17 +3029,11 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
-// 隐藏双指缩放虾线
+// 默认隐藏清屏缩放横线
 %hook AWELoadingAndVolumeView
-
-- (void)layoutSubviews {
-	%orig;
-
-	if ([self respondsToSelector:@selector(removeFromSuperview)]) {
-		[self removeFromSuperview];
-	}
-	self.hidden = YES;
-	return;
+	// 拦截初始化方法，阻止视图创建
+- (instancetype)initWithFrame:(CGRect)frame {
+    return nil;
 }
 
 %end
@@ -3158,7 +3160,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
-// 隐藏视频上方搜索长框
+// 隐藏作者作品内搜索框
 %hook AWESearchEntranceView
 
 - (void)layoutSubviews {
@@ -3351,7 +3353,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
-// 隐藏点击推荐提示
+// 隐藏点击推荐
 %hook AFDRecommendToFriendEntranceLabel
 - (void)layoutSubviews {
 	%orig;
@@ -3566,7 +3568,7 @@ static AWEIMReusableCommonCell *currentCell;
 }
 %end
 
-// 去除群聊天输入框上方快捷方式
+// 去除聊天快捷工具栏
 %hook AWEIMInputActionBarInteractor
 
 - (void)p_setupUI {
@@ -3742,7 +3744,7 @@ static AWEIMReusableCommonCell *currentCell;
 
 %end
 
-// 隐藏直播间右上方关闭直播按钮
+// 隐藏直播间关闭按钮
 %hook IESLiveLayoutPlaceholderView
 - (void)layoutSubviews {
 	%orig;
@@ -3873,17 +3875,6 @@ static AWEIMReusableCommonCell *currentCell;
 			}
 		}
 	}
-}
-%end
-
-// 移除极速版我的片面红包横幅
-%hook AWELuckyCatBannerView
-- (id)initWithFrame:(CGRect)frame {
-	return nil;
-}
-
-- (id)init {
-	return nil;
 }
 %end
 
