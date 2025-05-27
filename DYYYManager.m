@@ -301,43 +301,45 @@
 + (void)saveMedia:(NSURL *)mediaURL
         mediaType:(MediaType)mediaType
        completion:(void (^)(void))completion {
-  if (mediaType == MediaTypeAudio) {
-    return;
-  }
-
-  [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
-    if (status == PHAuthorizationStatusAuthorized) {
-      } else {
-        // 非表情包类型的正常保存流程
-        [[PHPhotoLibrary sharedPhotoLibrary]
-            performChanges:^{
-              if (mediaType == MediaTypeVideo) {
-                [PHAssetChangeRequest
-                    creationRequestForAssetFromVideoAtFileURL:mediaURL];
-              } else {
-                UIImage *image =
-                    [UIImage imageWithContentsOfFile:mediaURL.path];
-                if (image) {
-                  [PHAssetChangeRequest creationRequestForAssetFromImage:image];
-                }
-              }
-            }
-            completionHandler:^(BOOL success, NSError *_Nullable error) {
-              if (success) {
-
-                if (completion) {
-                  completion();
-                }
-              } else {
-                [self showToast:@"保存失败"];
-              }
-              // 不管成功失败都清理临时文件
-              [[NSFileManager defaultManager] removeItemAtPath:mediaURL.path
-                                                         error:nil];
-            }];
-      }
+    if (mediaType == MediaTypeAudio) {
+        if (completion) completion();
+        return;
     }
-  }];
+
+    [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+        if (status == PHAuthorizationStatusAuthorized) {
+            // 授权成功的处理
+            [[PHPhotoLibrary sharedPhotoLibrary]
+                performChanges:^{
+                    if (mediaType == MediaTypeVideo) {
+                        [PHAssetChangeRequest
+                            creationRequestForAssetFromVideoAtFileURL:mediaURL];
+                    } else {
+                        UIImage *image =
+                            [UIImage imageWithContentsOfFile:mediaURL.path];
+                        if (image) {
+                            [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+                        }
+                    }
+                }
+                completionHandler:^(BOOL success, NSError *_Nullable error) {
+                    if (success) {
+                        if (completion) {
+                            completion();
+                        }
+                    } else {
+                        [self showToast:@"保存失败"];
+                    }
+                    // 不管成功失败都清理临时文件
+                    [[NSFileManager defaultManager] removeItemAtPath:mediaURL.path
+                                                               error:nil];
+                }];
+        } else {
+            // 授权失败的处理
+            [self showToast:@"无相册权限"];
+            if (completion) completion();
+        }
+    }];
 }
 
 + (void)downloadLivePhoto:(NSURL *)imageURL
