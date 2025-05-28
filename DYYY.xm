@@ -432,6 +432,8 @@
 }
 %end
 
+%end
+
 %hook UIView
 // 关键方法,误删！
 %new
