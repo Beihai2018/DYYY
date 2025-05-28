@@ -36,7 +36,7 @@ TWEAK_NAME = DYYY
 
 DYYY_FILES = DYYY.xm DYYYFilterAdsAndFeed.xm DYYYFullScreen.xm DYYYDarkMode.xm DYYYFloatClearButton.xm DYYYFloatSpeedButton.xm DYYYSettings.xm DYYYABTestHook.xm DYYYLongPressPanel.xm DYYYDoubleClickMenu.xm DYYYSettingsHelper.m DYYYSettingViewController.m DYYYBottomAlertView.m DYYYCustomInputView.m DYYYOptionsSelectionView.m DYYYIconOptionsDialogView.m DYYYAboutDialogView.m DYYYKeywordListView.m DYYYFilterSettingsView.m DYYYConfirmCloseView.m DYYYToast.m DYYYManager.m DYYYUtils.m CityManager.m
 DYYY_CFLAGS = -fobjc-arc -w -I$(DYYY_HEADER_SEARCH_PATHS)
-DYYY_LDFLAGS += -weak_framework AVFoundation
+DYYY_LDFLAGS = -L$(DYYY_LIBRARY_SEARCH_PATHS) -weak_framework AVFAudio
 DYYY_FRAMEWORKS = CoreAudio
 CXXFLAGS += -std=c++11
 CCFLAGS += -std=c++11
