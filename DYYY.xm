@@ -229,6 +229,8 @@
 	if (transparentValue && transparentValue.length > 0) {
 		CGFloat alphaValue = [transparentValue floatValue];
 		if (alphaValue >= 0.0 && alphaValue <= 1.0) {
+			// 自己骗自己,透明度很小时使用0.011
+			CGFloat finalAlpha = (alphaValue < 0.011) ? 0.011 : alphaValue;
 
 			// 设置自身背景色的透明度
 			UIColor *backgroundColor = self.backgroundColor;
