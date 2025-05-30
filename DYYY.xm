@@ -16,6 +16,7 @@
 #import "DYYYConstants.h"
 #import "DYYYToast.h"
 
+// 顶栏移除
 %hook AWEFeedChannelManager
 
 - (void)reloadChannelWithChannelModels:(id)arg1 currentChannelIDList:(id)arg2 reloadType:(id)arg3 selectedChannelID:(id)arg4 {
@@ -138,76 +139,6 @@
 }
 %end
 
-%hook AWEFeedContainerContentView
-- (void)setAlpha:(CGFloat)alpha {
-	// 纯净模式功能
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisEnablePure"]) {
-		%orig(0.0);
-		static dispatch_source_t timer = nil;
-		static int attempts = 0;
-		if (timer) {
-			dispatch_source_cancel(timer);
-			timer = nil;
-		}
-		void (^tryFindAndSetPureMode)(void) = ^{
-		  UIWindow *keyWindow = [DYYYManager getActiveWindow];
-		  if (keyWindow && keyWindow.rootViewController) {
-			  UIViewController *feedVC = [self findViewController:keyWindow.rootViewController ofClass:NSClassFromString(@"AWEFeedTableViewController")];
-			  if (feedVC) {
-				  [feedVC setValue:@YES forKey:@"pureMode"];
-				  if (timer) {
-					  dispatch_source_cancel(timer);
-					  timer = nil;
-				  }
-				  attempts = 0;
-				  return;
-			  }
-		  }
-		  attempts++;
-		  if (attempts >= 10) {
-			  if (timer) {
-				  dispatch_source_cancel(timer);
-				  timer = nil;
-			  }
-			  attempts = 0;
-		  }
-		};
-		timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
-		dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC, 0);
-		dispatch_source_set_event_handler(timer, tryFindAndSetPureMode);
-		dispatch_resume(timer);
-		tryFindAndSetPureMode();
-		return;
-	}
-	// 原来的透明度设置逻辑，保持不变
-	NSString *transparentValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYtopbartransparent"];
-	if (transparentValue && transparentValue.length > 0) {
-		CGFloat alphaValue = [transparentValue floatValue];
-		if (alphaValue >= 0.0 && alphaValue <= 1.0) {
-			CGFloat finalAlpha = (alphaValue < 0.011) ? 0.011 : alphaValue;
-			%orig(finalAlpha);
-		} else {
-			%orig(1.0);
-		}
-	} else {
-		%orig(1.0);
-	}
-}
-%new
-- (UIViewController *)findViewController:(UIViewController *)vc ofClass:(Class)targetClass {
-	if (!vc)
-		return nil;
-	if ([vc isKindOfClass:targetClass])
-		return vc;
-	for (UIViewController *childVC in vc.childViewControllers) {
-		UIViewController *found = [self findViewController:childVC ofClass:targetClass];
-		if (found)
-			return found;
-	}
-	return [self findViewController:vc.presentedViewController ofClass:targetClass];
-}
-%end
-
 // 添加新的 hook 来处理顶栏透明度
 %hook AWEFeedTopBarContainer
 - (void)layoutSubviews {
@@ -220,29 +151,21 @@
 }
 %new
 - (void)applyDYYYTransparency {
-	// 如果启用了纯净模式，不做任何处理
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisEnablePure"]) {
-		return;
-	}
-
 	NSString *transparentValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYtopbartransparent"];
 	if (transparentValue && transparentValue.length > 0) {
 		CGFloat alphaValue = [transparentValue floatValue];
 		if (alphaValue >= 0.0 && alphaValue <= 1.0) {
-			// 自己骗自己,透明度很小时使用0.011
-			CGFloat finalAlpha = (alphaValue < 0.011) ? 0.011 : alphaValue;
-
 			// 设置自身背景色的透明度
 			UIColor *backgroundColor = self.backgroundColor;
 			if (backgroundColor) {
 				CGFloat r, g, b, a;
 				if ([backgroundColor getRed:&r green:&g blue:&b alpha:&a]) {
-					self.backgroundColor = [UIColor colorWithRed:r green:g blue:b alpha:finalAlpha * a];
+					self.backgroundColor = [UIColor colorWithRed:r green:g blue:b alpha:alphaValue * a];
 				}
 			}
 
 			// 设置视图的alpha
-			[(UIView *)self setAlpha:finalAlpha];
+			[(UIView *)self setAlpha:alphaValue];
 
 			// 确保子视图不会叠加透明度
 			for (UIView *subview in self.subviews) {
@@ -250,52 +173,6 @@
 			}
 		}
 	}
-}
-%end
-
-// 弹幕改色
-%hook AWEDanmakuContentLabel
-- (void)setTextColor:(UIColor *)textColor {
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYEnableDanmuColor"]) {
-		NSString *danmuColor = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYdanmuColor"];
-
-		if ([danmuColor.lowercaseString isEqualToString:@"random"] || [danmuColor.lowercaseString isEqualToString:@"#random"]) {
-			textColor = [UIColor colorWithRed:(arc4random_uniform(256)) / 255.0
-						    green:(arc4random_uniform(256)) / 255.0
-						     blue:(arc4random_uniform(256)) / 255.0
-						    alpha:CGColorGetAlpha(textColor.CGColor)];
-			self.layer.shadowOffset = CGSizeZero;
-			self.layer.shadowOpacity = 0.0;
-		} else if ([danmuColor hasPrefix:@"#"]) {
-			textColor = [self colorFromHexString:danmuColor baseColor:textColor];
-			self.layer.shadowOffset = CGSizeZero;
-			self.layer.shadowOpacity = 0.0;
-		} else {
-			textColor = [self colorFromHexString:@"#FFFFFF" baseColor:textColor];
-		}
-	}
-
-	%orig(textColor);
-}
-
-%new
-- (UIColor *)colorFromHexString:(NSString *)hexString baseColor:(UIColor *)baseColor {
-	if ([hexString hasPrefix:@"#"]) {
-		hexString = [hexString substringFromIndex:1];
-	}
-	if ([hexString length] != 6) {
-		return [baseColor colorWithAlphaComponent:1];
-	}
-	unsigned int red, green, blue;
-	[[NSScanner scannerWithString:[hexString substringWithRange:NSMakeRange(0, 2)]] scanHexInt:&red];
-	[[NSScanner scannerWithString:[hexString substringWithRange:NSMakeRange(2, 2)]] scanHexInt:&green];
-	[[NSScanner scannerWithString:[hexString substringWithRange:NSMakeRange(4, 2)]] scanHexInt:&blue];
-
-	if (red < 128 && green < 128 && blue < 128) {
-		return [UIColor whiteColor];
-	}
-
-	return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:CGColorGetAlpha(baseColor.CGColor)];
 }
 %end
 
@@ -321,46 +198,7 @@
 
 %end
 
-// 弹幕改色
-%hook AWEDanmakuItemTextInfo
-- (void)setDanmakuTextColor:(id)arg1 {
-
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYEnableDanmuColor"]) {
-		NSString *danmuColor = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYdanmuColor"];
-
-		if ([danmuColor.lowercaseString isEqualToString:@"random"] || [danmuColor.lowercaseString isEqualToString:@"#random"]) {
-			arg1 = [UIColor colorWithRed:(arc4random_uniform(256)) / 255.0 green:(arc4random_uniform(256)) / 255.0 blue:(arc4random_uniform(256)) / 255.0 alpha:1.0];
-		} else if ([danmuColor hasPrefix:@"#"]) {
-			arg1 = [self colorFromHexStringForTextInfo:danmuColor];
-		} else {
-			arg1 = [self colorFromHexStringForTextInfo:@"#FFFFFF"];
-		}
-	}
-
-	%orig(arg1);
-}
-
-%new
-- (UIColor *)colorFromHexStringForTextInfo:(NSString *)hexString {
-	if ([hexString hasPrefix:@"#"]) {
-		hexString = [hexString substringFromIndex:1];
-	}
-	if ([hexString length] != 6) {
-		return [UIColor whiteColor];
-	}
-	unsigned int red, green, blue;
-	[[NSScanner scannerWithString:[hexString substringWithRange:NSMakeRange(0, 2)]] scanHexInt:&red];
-	[[NSScanner scannerWithString:[hexString substringWithRange:NSMakeRange(2, 2)]] scanHexInt:&green];
-	[[NSScanner scannerWithString:[hexString substringWithRange:NSMakeRange(4, 2)]] scanHexInt:&blue];
-
-	if (red < 128 && green < 128 && blue < 128) {
-		return [UIColor whiteColor];
-	}
-
-	return [UIColor colorWithRed:(red / 255.0) green:(green / 255.0) blue:(blue / 255.0) alpha:1.0];
-}
-%end
-
+// 双指长按菜单
 %group DYYYSettingsGesture
 
 %hook UIWindow
@@ -374,7 +212,6 @@
 	return window;
 }
 
-// 双击菜单
 %new
 - (void)handleDoubleFingerLongPressGesture:(UILongPressGestureRecognizer *)gesture {
 	if (gesture.state == UIGestureRecognizerStateBegan) {
@@ -438,63 +275,6 @@
 
 %hook UIView
 // 关键方法,误删！
-%new
-- (UIViewController *)firstAvailableUIViewController {
-	UIResponder *responder = [self nextResponder];
-	while (responder != nil) {
-		if ([responder isKindOfClass:[UIViewController class]]) {
-			return (UIViewController *)responder;
-		}
-		responder = [responder nextResponder];
-	}
-	return nil;
-}
-
-%end
-
-// 重写全局透明方法
-%hook AWEPlayInteractionViewController
-
-- (UIView *)view {
-	UIView *originalView = %orig;
-
-	NSString *transparentValue = [[NSUserDefaults standardUserDefaults] stringForKey:@"DYYYGlobalTransparency"];
-	if (transparentValue.length > 0) {
-		CGFloat alphaValue = transparentValue.floatValue;
-		if (alphaValue >= 0.0 && alphaValue <= 1.0) {
-			for (UIView *subview in originalView.subviews) {
-				if (subview.tag != DYYY_IGNORE_GLOBAL_ALPHA_TAG) {
-					if (subview.alpha > 0) {
-						subview.alpha = alphaValue;
-					}
-				}
-			}
-		}
-	}
-
-	return originalView;
-}
-
-%end
-
-// 处理视频流直播文案透明度
-%hook AWEElementStackView
-
-- (void)layoutSubviews {
-	%orig;
-
-	UIViewController *vc = [self firstAvailableUIViewController];
-	if ([vc isKindOfClass:%c(AWELiveNewPreStreamViewController)]) {
-		NSString *transparentValue = [[NSUserDefaults standardUserDefaults] stringForKey:@"DYYYGlobalTransparency"];
-		if (transparentValue.length > 0) {
-			CGFloat alphaValue = transparentValue.floatValue;
-			if (alphaValue >= 0.0 && alphaValue <= 1.0) {
-				self.alpha = alphaValue;
-			}
-		}
-	}
-}
-
 %new
 - (UIViewController *)firstAvailableUIViewController {
 	UIResponder *responder = [self nextResponder];
@@ -1040,22 +820,6 @@ static CGFloat rightLabelRightMargin = -1;
 			}
 		}
 	}
-	// 应用IP属地标签上移
-	NSString *ipScaleValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYNicknameScale"];
-	if (ipScaleValue.length > 0) {
-		UIFont *originalFont = label.font;
-		CGRect originalFrame = label.frame;
-		CGFloat offset = [[NSUserDefaults standardUserDefaults] floatForKey:@"DYYYIPLabelVerticalOffset"];
-		if (offset > 0) {
-			CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(0, -offset);
-			label.transform = translationTransform;
-		} else {
-			CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(0, -3);
-			label.transform = translationTransform;
-		}
-
-		label.font = originalFont;
-	}
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYEnabsuijiyanse"]) {
 		UIColor *color1 = [UIColor colorWithRed:(CGFloat)arc4random_uniform(256) / 255.0
 						  green:(CGFloat)arc4random_uniform(256) / 255.0
@@ -1115,98 +879,6 @@ static CGFloat rightLabelRightMargin = -1;
 
 + (BOOL)shouldActiveWithData:(id)arg1 context:(id)arg2 {
 	return [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisEnableArea"];
-}
-
-%end
-
-// 文案下移距离
-%hook AWEPlayInteractionDescriptionScrollView
-
-- (void)layoutSubviews {
-	%orig;
-
-	self.transform = CGAffineTransformIdentity;
-
-	NSString *descriptionOffsetValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYDescriptionVerticalOffset"];
-	CGFloat verticalOffset = 0;
-	if (descriptionOffsetValue.length > 0) {
-		verticalOffset = [descriptionOffsetValue floatValue];
-	}
-
-	UIView *parentView = self.superview;
-	UIView *grandParentView = nil;
-
-	if (parentView) {
-		grandParentView = parentView.superview;
-	}
-
-	if (grandParentView && verticalOffset != 0) {
-		CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(0, verticalOffset);
-		grandParentView.transform = translationTransform;
-	}
-}
-
-%end
-
-// 对新版文案的偏移（33.0以上）
-%hook AWEPlayInteractionDescriptionLabel
-
-- (void)layoutSubviews {
-	%orig;
-
-	self.transform = CGAffineTransformIdentity;
-
-	NSString *descriptionOffsetValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYDescriptionVerticalOffset"];
-	CGFloat verticalOffset = 0;
-	if (descriptionOffsetValue.length > 0) {
-		verticalOffset = [descriptionOffsetValue floatValue];
-	}
-
-	UIView *parentView = self.superview;
-	UIView *grandParentView = nil;
-
-	if (parentView) {
-		grandParentView = parentView.superview;
-	}
-
-	if (grandParentView && verticalOffset != 0) {
-		CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(0, verticalOffset);
-		grandParentView.transform = translationTransform;
-	}
-}
-
-%end
-
-// 昵称下移距离
-%hook AWEUserNameLabel
-
-- (void)layoutSubviews {
-	%orig;
-
-	self.transform = CGAffineTransformIdentity;
-
-	// 添加垂直偏移支持
-	NSString *verticalOffsetValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYNicknameVerticalOffset"];
-	CGFloat verticalOffset = 0;
-	if (verticalOffsetValue.length > 0) {
-		verticalOffset = [verticalOffsetValue floatValue];
-	}
-
-	UIView *parentView = self.superview;
-	UIView *grandParentView = nil;
-
-	if (parentView) {
-		grandParentView = parentView.superview;
-	}
-
-	// 检查祖父视图是否为 AWEBaseElementView 类型
-	if (grandParentView && [grandParentView.superview isKindOfClass:%c(AWEBaseElementView)]) {
-		CGRect scaledFrame = grandParentView.frame;
-		CGFloat translationX = -scaledFrame.origin.x;
-
-		CGAffineTransform translationTransform = CGAffineTransformMakeTranslation(translationX, verticalOffset);
-		grandParentView.transform = translationTransform;
-	}
 }
 
 %end
@@ -1966,7 +1638,7 @@ bool commentLivePhotoNotWaterMark = [[NSUserDefaults standardUserDefaults] boolF
 
 %end
 
-// 默认隐藏清屏缩放横线
+// 默认隐藏双指缩放横线
 %hook AWELoadingAndVolumeView
 	// 拦截初始化方法，阻止视图创建
 - (instancetype)initWithFrame:(CGRect)frame {
