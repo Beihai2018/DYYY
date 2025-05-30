@@ -71,7 +71,7 @@ typedef NS_ENUM(NSInteger, DYYYSettingItemType) {
 - (void)setupDefaultValues {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    // 如果接口解析未设置，填写默认值
+    // 如果接口解析未填写，设置默认值
     if (![defaults objectForKey:@"DYYYInterfaceDownload"]) {
         [defaults setObject:@"https://api.qsy.ink/api/douyin?key=DYYY&url=" forKey:@"DYYYInterfaceDownload"];
     }
