@@ -386,7 +386,6 @@ static void initTargetClassNames(void) {
     self.isElementsHidden = NO;
     [self.hiddenViewsList removeAllObjects];
     self.selected = NO;
-    }
 }
 - (void)dealloc {
 	[self.checkTimer invalidate];
