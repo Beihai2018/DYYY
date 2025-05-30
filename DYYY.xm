@@ -1152,9 +1152,12 @@ static CGFloat rightLabelRightMargin = -1;
 }
 %end
 
-// 设置长按倍数
 %end
+
+// 设置长按倍数
 %hook AWEPlayInteractionSpeedController
+
+static BOOL hasChangedSpeed = NO;
 
 - (CGFloat)longPressFastSpeedValue {
 	float longPressSpeed = [[NSUserDefaults standardUserDefaults] floatForKey:@"DYYYLongPressSpeed"];
@@ -1165,17 +1168,28 @@ static CGFloat rightLabelRightMargin = -1;
 }
 
 - (void)changeSpeed:(double)speed {
-	float longPressSpeed = [[NSUserDefaults standardUserDefaults] floatForKey:@"DYYYLongPressSpeed"];
-	if (longPressSpeed == 0) {
-		longPressSpeed = 2.0;
-	}
-
-	if (speed == 2.0) {
-		%orig(longPressSpeed);
-	} else {
-		%orig(speed);
-	}
+    float longPressSpeed = [[NSUserDefaults standardUserDefaults] floatForKey:@"DYYYLongPressSpeed"];
+    
+    if (speed == 2.0) {
+        if (!hasChangedSpeed) {
+            if (longPressSpeed != 0 && longPressSpeed != 2.0) {
+                hasChangedSpeed = YES;
+                %orig(longPressSpeed);
+                return;
+            }
+        } else {
+            hasChangedSpeed = NO;
+            %orig(1.0);
+            return;
+        }
+    }
+    
+    if (longPressSpeed == 0 || longPressSpeed == 2) {
+        %orig(speed);
+        return;
+    }
 }
+
 
 %end
 
