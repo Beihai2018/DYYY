@@ -607,6 +607,20 @@ static CGFloat currentScale = 1.0;
 			}
 		}
 	}
+	// 隐藏全屏分割线
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisEnableFullScreen"]) {
+		for (UIView *subview in self.subviews) {
+			if (![subview isKindOfClass:[UIView class]])
+				continue;
+			if (subview.frame.size.height <= 0.5 && subview.frame.size.width > 300) {
+				subview.hidden = YES;
+				CGRect frame = subview.frame;
+				frame.size.height = 0;
+				subview.frame = frame;
+				subview.alpha = 0;
+			}
+		}
+	}
 }
 
 %end
