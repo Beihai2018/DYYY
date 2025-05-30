@@ -95,19 +95,6 @@ static void initTargetClassNames(void) {
         @"AFDRecommendToFriendTagView", @"AWELandscapeFeedEntryView",
         @"AWEFeedAnchorContainerView", @"AFDAIbumFolioView", @"DUXPopover"
     ] mutableCopy];
-    BOOL hideTabBar = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideTabBar"];
-    if (hideTabBar) {
-        [list addObject:@"AWENormalModeTabBar"];
-    }
-	BOOL hideDanmaku = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideDanmaku"];
-	if (hideDanmaku) {
-		[list addObject:@"AWEVideoPlayDanmakuContainerView"];
-	}
-	BOOL hideSlider = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideSlider"];
-	if (hideSlider) {
-		[list addObject:@"AWEStoryProgressSlideView"];
-		[list addObject:@"AWEStoryProgressContainerView"];
-	}
 
     targetClassNames = [list copy];
 }
@@ -287,12 +274,6 @@ static void initTargetClassNames(void) {
         [self hideUIElements];
         self.isElementsHidden = YES;
         self.selected = YES;
-        
-        // 如果设置了隐藏倍速按钮，则在清屏时隐藏它
-        BOOL hideSpeed = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideSpeed"];
-        if (hideSpeed) {
-            hideSpeedButton();
-        }
     } else {
         forceResetAllUIElements();
         // 还原 AWEPlayInteractionProgressContainerView 视图
@@ -300,11 +281,6 @@ static void initTargetClassNames(void) {
         self.isElementsHidden = NO;
         [self.hiddenViewsList removeAllObjects];
         self.selected = NO;
-        
-        // 如果设置了隐藏倍速按钮，则在恢复UI时显示它
-        BOOL hideSpeed = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideSpeed"];
-        if (hideSpeed) {
-            showSpeedButton();
         }
     }
 }
@@ -410,11 +386,6 @@ static void initTargetClassNames(void) {
     self.isElementsHidden = NO;
     [self.hiddenViewsList removeAllObjects];
     self.selected = NO;
-    
-    // 恢复倍速按钮的显示
-    BOOL hideSpeed = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideSpeed"];
-    if (hideSpeed) {
-        showSpeedButton();
     }
 }
 - (void)dealloc {
