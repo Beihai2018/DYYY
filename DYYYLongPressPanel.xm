@@ -580,8 +580,7 @@
 %end
 
 %ctor {
-	Class ownerClass = objc_getClass("AWECommentLongPressPanelSwiftImpl.CommentLongPressPanelNormalSectionViewModel");
-	if (ownerClass) {
-		%init(DYYYFilterSetterGroup, HOOK_TARGET_OWNER_CLASS = ownerClass);
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYUserAgreementAccepted"]) {
+		%init;
 	}
 }
