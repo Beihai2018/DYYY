@@ -28,21 +28,16 @@
 
 	// 检查各个单独的功能开关
 	BOOL enableSaveVideo = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressSaveVideo"];
-	BOOL enableSaveCover = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressSaveCover"];
-	BOOL enableSaveAudio = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressSaveAudio"];
 	BOOL enableSaveCurrentImage = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressSaveCurrentImage"];
 	BOOL enableSaveAllImages = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressSaveAllImages"];
-	BOOL enableCopyText = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressCopyText"];
-	BOOL enableCopyLink = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressCopyLink"];
 	BOOL enableApiDownload = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressApiDownload"];
 	BOOL enableFilterUser = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressFilterUser"];
 	BOOL enableFilterKeyword = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressFilterTitle"];
 	BOOL enableTimerClose = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressTimerClose"];
-	BOOL enableCreateVideo = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYLongPressCreateVideo"];
 
 	// 检查是否有任何功能启用
-	hasAnyFeatureEnabled = enableSaveVideo || enableSaveCover || enableSaveAudio || enableSaveCurrentImage || enableSaveAllImages || enableCopyText || enableCopyLink || enableApiDownload ||
-			       enableFilterUser || enableFilterKeyword || enableTimerClose || enableCreateVideo;
+	hasAnyFeatureEnabled = enableSaveVideo || enableSaveCurrentImage || enableSaveAllImages || enableApiDownload ||
+			       enableFilterUser || enableFilterKeyword || enableTimerClose;
 
 	// 处理原始面板按钮的显示/隐藏
 	NSMutableArray *modifiedArray = [NSMutableArray array];
@@ -63,12 +58,8 @@
 	BOOL hideSearchImage = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHidePanelSearchImage"];
 	BOOL hideListenDouyin = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHidePanelListenDouyin"];
 	BOOL hideBackgroundPlay = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHidePanelBackgroundPlay"];
-	BOOL hideBiserial = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHidePanelBiserial"];
-	BOOL hideTimerclose = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHidePanelTimerClose"];
 // 旧版
-	BOOL hideZhuanfa = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideZhuanfa"];
 	BOOL hidetuijian = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideTuijian"];
-	BOOL hideZanshang = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideZanshang"];
 	BOOL hideJianqun = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideJianqun"];
 	BOOL hideHepai = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideHepai"];
 	BOOL hideYiqikan = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideYiqikan"];
@@ -121,16 +112,8 @@
 						shouldHide = YES;
 					} else if ([descString isEqualToString:@"后台播放设置"] && hideBackgroundPlay) {
 						shouldHide = YES;
-					} else if ([descString isEqualToString:@"首页双列快捷入口"] && hideBiserial) {
-						shouldHide = YES;
-					} else if ([descString isEqualToString:@"定时关闭"] && hideTimerclose) {
-						shouldHide = YES;
 	// 旧版
-					} else if ([descString isEqualToString:@"转发到朋友日常"] && hideZhuanfa) {
-						shouldHide = YES;
 					} else if ([descString isEqualToString:@"推荐给朋友"] && hidetuijian) {
-						shouldHide = YES;
-					} else if ([descString isEqualToString:@"赞赏视频"] && hideZanshang) {
 						shouldHide = YES;
 					} else if ([descString isEqualToString:@"建群分享"] && hideJianqun) {
 						shouldHide = YES;
@@ -260,53 +243,6 @@
 		[viewModels addObject:downloadViewModel];
 	}
 
-	// 封面下载功能
-	if (enableSaveCover && self.awemeModel.awemeType != 68) {
-		AWELongPressPanelBaseViewModel *coverViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
-		coverViewModel.awemeModel = self.awemeModel;
-		coverViewModel.actionType = 667;
-		coverViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
-		coverViewModel.describeString = @"保存封面";
-		coverViewModel.action = ^{
-		  AWEAwemeModel *awemeModel = self.awemeModel;
-		  AWEVideoModel *videoModel = awemeModel.video;
-		  if (videoModel && videoModel.coverURL && videoModel.coverURL.originURLList.count > 0) {
-			  NSURL *url = [NSURL URLWithString:videoModel.coverURL.originURLList.firstObject];
-			  [DYYYManager downloadMedia:url
-					   mediaType:MediaTypeImage
-					  completion:^(BOOL success) {
-					    if (success) {
-					    } else {
-						    [DYYYManager showToast:@"封面保存已取消"];
-					    }
-					  }];
-		  }
-		  AWELongPressPanelManager *panelManager = [%c(AWELongPressPanelManager) shareInstance];
-		  [panelManager dismissWithAnimation:YES completion:nil];
-		};
-		[viewModels addObject:coverViewModel];
-	}
-
-	// 音频下载功能
-	if (enableSaveAudio) {
-		AWELongPressPanelBaseViewModel *audioViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
-		audioViewModel.awemeModel = self.awemeModel;
-		audioViewModel.actionType = 668;
-		audioViewModel.duxIconName = @"ic_boxarrowdownhigh_outlined";
-		audioViewModel.describeString = @"保存音频";
-		audioViewModel.action = ^{
-		  AWEAwemeModel *awemeModel = self.awemeModel;
-		  AWEMusicModel *musicModel = awemeModel.music;
-		  if (musicModel && musicModel.playURL && musicModel.playURL.originURLList.count > 0) {
-			  NSURL *url = [NSURL URLWithString:musicModel.playURL.originURLList.firstObject];
-			  [DYYYManager downloadMedia:url mediaType:MediaTypeAudio completion:nil];
-		  }
-		  AWELongPressPanelManager *panelManager = [%c(AWELongPressPanelManager) shareInstance];
-		  [panelManager dismissWithAnimation:YES completion:nil];
-		};
-		[viewModels addObject:audioViewModel];
-	}
-
 	// 当前图片/实况下载功能
 	if (enableSaveCurrentImage && self.awemeModel.awemeType == 68 && self.awemeModel.albumImages.count > 0) {
 		AWELongPressPanelBaseViewModel *imageViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
@@ -420,41 +356,6 @@
 		[viewModels addObject:allImagesViewModel];
 	}
 
-	// 复制文案功能
-	if (enableCopyText) {
-		AWELongPressPanelBaseViewModel *copyText = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
-		copyText.awemeModel = self.awemeModel;
-		copyText.actionType = 671;
-		copyText.duxIconName = @"ic_xiaoxihuazhonghua_outlined";
-		copyText.describeString = @"复制文案";
-		copyText.action = ^{
-		  NSString *descText = [self.awemeModel valueForKey:@"descriptionString"];
-		  [[UIPasteboard generalPasteboard] setString:descText];
-		  [DYYYToast showSuccessToastWithMessage:@"文案已复制"];
-		  AWELongPressPanelManager *panelManager = [%c(AWELongPressPanelManager) shareInstance];
-		  [panelManager dismissWithAnimation:YES completion:nil];
-		};
-		[viewModels addObject:copyText];
-	}
-
-	// 复制分享链接功能
-	if (enableCopyLink) {
-		AWELongPressPanelBaseViewModel *copyShareLink = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
-		copyShareLink.awemeModel = self.awemeModel;
-		copyShareLink.actionType = 672;
-		copyShareLink.duxIconName = @"ic_share_outlined";
-		copyShareLink.describeString = @"复制链接";
-		copyShareLink.action = ^{
-		  NSString *shareLink = [self.awemeModel valueForKey:@"shareURL"];
-		  NSString *cleanedURL = cleanShareURL(shareLink);
-		  [[UIPasteboard generalPasteboard] setString:cleanedURL];
-		  [DYYYToast showSuccessToastWithMessage:@"分享链接已复制"];
-		  AWELongPressPanelManager *panelManager = [%c(AWELongPressPanelManager) shareInstance];
-		  [panelManager dismissWithAnimation:YES completion:nil];
-		};
-		[viewModels addObject:copyShareLink];
-	}
-
 	// 接口保存功能
 	NSString *apiKey = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYInterfaceDownload"];
 	if (enableApiDownload && apiKey.length > 0) {
@@ -477,6 +378,7 @@
 		[viewModels addObject:apiDownload];
 	}
 
+	// 定时关闭功能
 	if (enableTimerClose) {
 		AWELongPressPanelBaseViewModel *timerCloseViewModel = [[%c(AWELongPressPanelBaseViewModel) alloc] init];
 		timerCloseViewModel.awemeModel = self.awemeModel;
@@ -675,110 +577,6 @@
 		return @[ newGroupModel ];
 	}
 }
-%end
-
-// 隐藏评论分享功能
-
-%hook AWEIMCommentShareUserHorizontalCollectionViewCell
-
-- (void)layoutSubviews {
-	%orig;
-
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideCommentShareToFriends"]) {
-		self.hidden = YES;
-	} else {
-		self.hidden = NO;
-	}
-}
-
-%end
-
-%hook AWEIMCommentShareUserHorizontalSectionController
-
-- (CGSize)sizeForItemAtIndex:(NSInteger)index model:(id)model collectionViewSize:(CGSize)size {
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideCommentShareToFriends"]) {
-		return CGSizeZero;
-	}
-	return %orig;
-}
-
-- (void)configCell:(id)cell index:(NSInteger)index model:(id)model {
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideCommentShareToFriends"]) {
-		return;
-	}
-	%orig;
-}
-
-%end
-
-%ctor {
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYUserAgreementAccepted"]) {
-		%init;
-	}
-}
-
-%group DYYYFilterSetterGroup
-
-%hook HOOK_TARGET_OWNER_CLASS
-
-- (void)setModelsArray:(id)arg1 {
-	if (![arg1 isKindOfClass:[NSArray class]]) {
-		%orig(arg1);
-		return;
-	}
-
-	NSArray *inputArray = (NSArray *)arg1;
-	NSMutableArray *filteredArray = nil;
-
-	for (id item in inputArray) {
-		NSString *className = NSStringFromClass([item class]);
-
-		BOOL shouldFilter = ([className isEqualToString:@"AWECommentIMSwiftImpl.CommentLongPressPanelForwardElement"] &&
-				     [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideCommentLongPressDaily"]) ||
-
-				    ([className isEqualToString:@"AWECommentLongPressPanelSwiftImpl.CommentLongPressPanelCopyElement"] &&
-				     [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideCommentLongPressCopy"]) ||
-
-				    ([className isEqualToString:@"AWECommentLongPressPanelSwiftImpl.CommentLongPressPanelSaveImageElement"] &&
-				     [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideCommentLongPressSaveImage"]) ||
-
-				    ([className isEqualToString:@"AWECommentLongPressPanelSwiftImpl.CommentLongPressPanelReportElement"] &&
-				     [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideCommentLongPressReport"]) ||
-
-				    ([className isEqualToString:@"AWECommentStudioSwiftImpl.CommentLongPressPanelVideoReplyElement"] &&
-				     [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideCommentLongPressVideoReply"]) ||
-
-				    ([className isEqualToString:@"AWECommentSearchSwiftImpl.CommentLongPressPanelPictureSearchElement"] &&
-				     [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideCommentLongPressPictureSearch"]) ||
-
-				    ([className isEqualToString:@"AWECommentSearchSwiftImpl.CommentLongPressPanelSearchElement"] &&
-				     [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideCommentLongPressSearch"]);
-
-		if (shouldFilter) {
-			if (!filteredArray) {
-				filteredArray = [NSMutableArray arrayWithCapacity:inputArray.count];
-				for (id keepItem in inputArray) {
-					if (keepItem == item)
-						break;
-					[filteredArray addObject:keepItem];
-				}
-			}
-			continue;
-		}
-
-		if (filteredArray) {
-			[filteredArray addObject:item];
-		}
-	}
-
-	if (filteredArray) {
-		%orig([filteredArray copy]);
-	} else {
-		%orig(arg1);
-	}
-}
-
-%end
 %end
 
 %ctor {
