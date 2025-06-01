@@ -126,7 +126,7 @@
 					} else if ([descString isEqualToString:@"定时关闭"] && hideTimerclose) {
 						shouldHide = YES;
 	// 旧版
-					} else if ([descString isEqualToString:@"转发"] && hideZhuanfa) {
+					} else if ([descString isEqualToString:@"转发到朋友日常"] && hideZhuanfa) {
 						shouldHide = YES;
 					} else if ([descString isEqualToString:@"推荐给朋友"] && hidetuijian) {
 						shouldHide = YES;
