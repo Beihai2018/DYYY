@@ -112,7 +112,7 @@
 						shouldHide = YES;
 					} else if ([descString isEqualToString:@"后台播放设置"] && hideBackgroundPlay) {
 						shouldHide = YES;
-	// 旧版
+// 旧版
 					} else if ([descString isEqualToString:@"推荐给朋友"] && hidetuijian) {
 						shouldHide = YES;
 					} else if ([descString isEqualToString:@"建群分享"] && hideJianqun) {
