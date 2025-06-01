@@ -65,6 +65,14 @@
 	BOOL hideBackgroundPlay = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHidePanelBackgroundPlay"];
 	BOOL hideBiserial = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHidePanelBiserial"];
 	BOOL hideTimerclose = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHidePanelTimerClose"];
+// 旧版
+	BOOL hideZhuanfa = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideZhuanfa"];
+	BOOL hidetuijian = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideTuijian"];
+	BOOL hideZanshang = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideZanshang"];
+	BOOL hideJianqun = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideJianqun"];
+	BOOL hideHepai = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideHepai"];
+	BOOL hideYiqikan = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideYiqikan"];
+	BOOL hideBangshang = [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideBangshang"];
 
 	// 处理原始面板
 	for (id group in originalArray) {
@@ -79,9 +87,9 @@
 					NSString *descString = viewModel.describeString;
 					// 根据描述字符串判断按钮类型并决定是否隐藏
 					BOOL shouldHide = NO;
-					if ([descString isEqualToString:@"转发"] && hideDaily) {
+					if ([descString isEqualToString:@"转发到日常"] && hideDaily) {
 						shouldHide = YES;
-					} else if ([descString isEqualToString:@"推荐给朋友"] && hideRecommend) {
+					} else if ([descString isEqualToString:@"推荐"] && hideRecommend) {
 						shouldHide = YES;
 					} else if ([descString isEqualToString:@"不感兴趣"] && hideNotInterested) {
 						shouldHide = YES;
@@ -116,6 +124,21 @@
 					} else if ([descString isEqualToString:@"首页双列快捷入口"] && hideBiserial) {
 						shouldHide = YES;
 					} else if ([descString isEqualToString:@"定时关闭"] && hideTimerclose) {
+						shouldHide = YES;
+	// 旧版
+					} else if ([descString isEqualToString:@"转发"] && hideZhuanfa) {
+						shouldHide = YES;
+					} else if ([descString isEqualToString:@"推荐给朋友"] && hidetuijian) {
+						shouldHide = YES;
+					} else if ([descString isEqualToString:@"赞赏视频"] && hideZanshang) {
+						shouldHide = YES;
+					} else if ([descString isEqualToString:@"建群分享"] && hideJianqun) {
+						shouldHide = YES;
+					} else if ([descString isEqualToString:@"合拍"] && hideHepai) {
+						shouldHide = YES;
+					} else if ([descString isEqualToString:@"一起看视频"] && hideYiqikan) {
+						shouldHide = YES;
+					} else if ([descString isEqualToString:@"帮上热门"] && hideBangshang) {
 						shouldHide = YES;
 					}
 
