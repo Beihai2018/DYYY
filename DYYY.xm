@@ -1806,11 +1806,8 @@ bool commentLivePhotoNotWaterMark = [[NSUserDefaults standardUserDefaults] boolF
 - (void)layoutSubviews {
 	%orig;
 	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYHideRecommendTips"]) {
-		UIView *parentView = self.superview;
-		if (parentView) {
-			parentView.hidden = YES;
-		} else {
-			self.hidden = YES;
+		if (self.accessibilityLabel) {
+			[self removeFromSuperview];
 		}
 	}
 }
